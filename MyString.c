@@ -1,18 +1,22 @@
 # include "Menu.h"
+# include "MyString.h"
+extern int Key;
 
-void StringControl(int Key, char *pDB)
+int StringControl(char *pDB, char *szCache)
 {
+    
     switch (Key)
     {
     case 1:
     {
-        InputUnit()
-        AddString(pDB);
+        
+        GetString(szCache);
+        AddString(pDB, szCache);
         break;
     }
     case 2:
     {
-        ModifyString(pDB);
+        ModifyString(pDB, szCache);
         break;
     }
     case 3:
@@ -22,7 +26,7 @@ void StringControl(int Key, char *pDB)
     }
     case 4:
     {
-        DeleteString(pDB);
+        DeleteString(pDB, szCache);
         break;
     }
     case 5:
@@ -39,12 +43,12 @@ void StringControl(int Key, char *pDB)
     }
 }
 
-void AddString(char *pDB)
+void AddString(char *pDB, const char *szCache)
 {
     
 }
 
-void ModifyString(char *pDB)
+void ModifyString(char *pDB, const char *szCache)
 {
 
 }
@@ -52,7 +56,7 @@ void SearchString(char *pDB)
 {
 
 }
-void DeleteString(char *pDB)
+void DeleteString(char *pDB, const char *szCache)
 {
 
 }
@@ -66,3 +70,11 @@ char DBInfo(char *pDB)
 
 }
 
+/*
+function: Input a string to string cache.
+Parameter: string cache adress.
+*/
+int GetString(char* szCache)
+{
+    scanf("%30s", szCache);
+}

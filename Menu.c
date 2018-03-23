@@ -1,6 +1,6 @@
 # include "Menu.h"
-
-void PrintMenu(int Key)
+extern int Key;
+void PrintMenu()
 {
     switch (Key)
     {
@@ -48,6 +48,10 @@ void PrintMenu(int Key)
         printf("目前空间使用情况：\n");
         break;
     }
+    case 7:
+    {
+        
+    }
     case 0:
     {
         printf("再见！");
@@ -59,7 +63,7 @@ void PrintMenu(int Key)
 }
 
 
-int InputUnit()
+int GetKey()
 {
     int Key = 0;
     scanf("%1d", &Key);
