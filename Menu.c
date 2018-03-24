@@ -1,5 +1,8 @@
 # include "Menu.h"
-extern int Key;
+
+/*
+Function: All output Option
+*/
 void PrintMenu()
 {
     switch (Key)
@@ -16,21 +19,29 @@ void PrintMenu()
         printf("      6. 存储信息\n");
         printf("      0. 退出\n");
         printf("===================================\n");
-        printf("请输入：");
+        printf("请选择：");
+        break;
     }
     case 1:
     {
-        printf("请输入您要增加的字段：\n");
+        printf("请输入您要增加的字符串，字符串长度小于30个字节：\n");
         break;
     }
     case 2:
     {
-        printf("请输入您要修改的字段：\n");
+        printf("请输入您要修改的字符串：\n");
         break;
     }
     case 3:
     {
-        printf("请输入您要查询的字段：\n");
+        printf("      请选择您查询的方式：\n");
+        printf("===================================\n");
+        printf("      1. 按编号查询\n");
+        printf("      2. 模糊查询\n");
+        printf("      3. 按地址查询\n");
+        printf("      0. 返回\n");
+        printf("===================================\n");
+        printf("请选择：");
         break;
     }
     case 4:
@@ -50,25 +61,57 @@ void PrintMenu()
     }
     case 7:
     {
-        
+        printf("您输入的字符串是：");
+        break;
+    }
+    case 10:
+    {
+        printf("请输入编号：");
+        break;
+    }
+    case 20:
+    {
+        printf("请输入字符串：");
+        break;
+    }
+    case 30:
+    {
+        printf("请输入地址：");
+        break;
     }
     case 0:
     {
         printf("再见！");
         break;
     }
+    //abnormal exit
+    case -2:
+    {
+        printf("System Crash!!!!!!!!!!!!\n");
+        exit(0);
+        break;
     }
-
-    return 0;
+    }
+    
+    return ;
 }
 
-
-int GetKey()
+/*
+Function: Jump to Menu
+*/
+PrintSubMenu()
 {
-    int Key = 0;
+    Key = Key * 10;
+    PrintMenu();
+}
+/*
+Function: Receive input options.
+*/
+void GetKey()
+{
+    fflush(stdin);
     scanf("%1d", &Key);
     fflush(stdin);
 
-    return Key;
 }
 
