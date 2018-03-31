@@ -32,33 +32,131 @@ int main()
             iSerialNo = InPutString(pDB);
             Key = 7;
             PrintMenu();
-            OutPutString(pDB, iSerialNo);
+			if (!OutPutString(pDB, iSerialNo))
+			{
+				Key = 40;
+				PrintMenu();
+			}
 
             system("pause");
             break;
         }
         case 2:
         {
-
-            ModifyString(pDB);
+			while (36 != Key)
+			{	
+				Key = 2;
+				PrintMenu();
+				GetString();
+				Key = 11;
+				PrintMenu();
+				if (!SearchByStr(pDB))
+				{
+					Key = 40;
+					PrintMenu();
+					system("pause");
+					system("cls");
+					break;
+				}
+				Key = 31;
+				PrintMenu();
+				iSerialNo = GetID();
+				Key = 21;
+				PrintMenu();
+				GetKey();
+				Key *= 12;
+				switch (Key)
+				{
+				case 12:
+				{
+					PrintMenu();
+					GetString();
+					ModifyString(pDB, iSerialNo);
+					break;
+				}
+				case 24:
+				{
+					system("cls");
+					break;
+				}
+				case 36:
+				{
+					break;
+				}
+				}/*switch (Key) end*/
+			}/*while (1) end*/
             break;
-        }
+		}/*case 2 end*/
         case 3:
         {
-            PrintMenu();
-            GetKey();
-            if (0 == Key)
+
+			while (Key)
             {
-                continue;
+                Key = 3;
+                PrintMenu();
+                GetKey();
+                if (0 == Key)
+                {
+                    continue;
+                }
+                system("cls");
+				Key *= 10;
+				PrintMenu();
+
+                switch (Key)
+                {
+                case 10:
+                {
+                    iSerialNo = GetID();
+                    Key = 8;
+                    PrintMenu();
+					if (!OutPutString(pDB, iSerialNo))
+					{
+						Key = 40;
+						PrintMenu();
+					}
+                    break;
+                }
+                case 20:
+				{
+                    GetString();
+					Key = 8;
+					PrintMenu();
+					if (!SearchByStr(pDB))
+					{
+						Key = 40;
+						PrintMenu();
+					}
+
+                    break;
+                }
+                case 30:
+                {
+					char* pcAddr = NULL;
+					pcAddr = GetAddr();
+					
+					Key = 8;
+					PrintMenu();
+					if (!SearchByAddr(pDB, pcAddr))
+					{
+						Key = 40;
+						PrintMenu();
+					}
+					PutString();
+					break;
+                }
+                }
+                Key = 9;
+                PrintMenu();
+                GetKey();
+                system("cls");
             }
-            PrintSubMenu();
-            GetSearchInfo();
-            SearchString(pDB);
             break;
         }
         case 4:
         {
-            DeleteString(pDB);
+			iSerialNo = GetID();
+            DeleteString(pDB, iSerialNo);
             break;
         }
         case 5:
@@ -76,7 +174,7 @@ int main()
         {
             PrintMenu();
         }
-        }
+		}/*switch (Key) end*/;
     }
     system("pause");
 

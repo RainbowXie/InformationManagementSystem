@@ -1,7 +1,7 @@
 # include "MyString.h"
 # define _CRT_SECURE_NO_WARNINGS
 static char szCache[CACHESIZ] = { 0 };
-static int iSerialNo = 0;
+static int iSerialNo[333] = { 0 };
 //int StringControl(char *pDB, char *szCache)
 //{
 //    int iStrLength = 0;
@@ -45,7 +45,13 @@ static int iSerialNo = 0;
 //    }
 //    return 0;
 //}
+/*
+Function: Add a string into string database.
 
+Parameter: pDb is the pointer of database.
+Return Value: return the serial number of the stored string. if don't find enough space, return -2.
+
+*/
 int InPutString(char *pDB)
 {
     int iRet = 0;
@@ -61,10 +67,12 @@ Function: Add a string into the string database.
 Set serial number which according to the input order as the 1st byte of each string.
 Set string length as the 2nd byte of the string.
 The 3rd byte begin to store string.
-Parameter: pDb is the pointer of database, iStrLength is the Length of input string.
+Parameter: pDb is the pointer of database, iStrLength is the Length of input string + 3byte.
+Return Value: return the serial number of the stored string. if don't find enough space, return -2.
 */
 int AddString(char *pDB, int iStrLength)
 {
+	int i = 1;
     char *pHead = NULL;
     pHead = FindSpace(pDB, iStrLength);
     //while ()
@@ -72,44 +80,95 @@ int AddString(char *pDB, int iStrLength)
     {
         return -2;
     }
-    iSerialNo++;
-    *pHead = iSerialNo;
+	while (1)
+	{
+		if (i != iSerialNo[i])
+		{
+			iSerialNo[i] = i;
+			break;
+		}
+		i++;
+	}
+    
+    *pHead = iSerialNo[i];
     pHead++;
     *pHead = iStrLength;
     pHead++;
     strcpy(pHead, szCache);
     FlushCache();
-    return iSerialNo;
+    return iSerialNo[i];
 }
 
-void ModifyString(char *pDB, const char *szCache)
+/*
+Function: modify a string in database. if database have enough space excuting modify; if not, keep it as it is.
+Parameter: Parameter: pDb is the pointer of database, iID is the serial number of the string.
+Return Value: Return 1 if modify success, Return -2 if failure.
+*/
+int ModifyString(char *pDB, int iID)
 {
+	char* paryHead = NULL;
+	if (NULL == (paryHead = FindString(pDB, iID)))
+	{
+		return -2;
+	}
 
-}
-int SearchString(char *pDB)
-{
-    int iRet = 0;
-    switch (Key)
-    {
-    case 10:
-    {
-        iRet = SearchByNo();
-        break;
-    }
-    case 20:
-    {
-        iRet = SearchByStr();
-    }
-    case 30:
-    {
-        iRet = SearchByAddr();
-    }
-    }
-    return iRet;
-}
-void DeleteString(char *pDB)
-{
+	if (*(paryHead + 1) < (strlen(szCache) + 3))
+	{
+		if (NULL == FindSpace(pDB, (strlen(szCache) + 3)))
+		{
+			return -2;
+		}
+	}
 
+	DeleteString(pDB, iID);
+	InPutString(pDB);
+	return 0;
+}
+//int SearchString(char *pDB, int Key)
+//{
+//    int iRet = 0;
+//    switch (Key)
+//    {
+//    case 10:
+//    {
+//        iRet = GetID();
+//        OutPutString(pDB, iRet);
+//        break;
+//    }
+//    case 20:
+//    {
+//        iRet = SearchByStr(pDB);
+//    }
+//    case 30:
+//    {
+//        iRet = SearchByAddr(pDB);
+//    }
+//    }
+//    return iRet;
+//}
+/*
+Function: Delete a string from database, release it's serial number.
+Parameter: pDb is the pointer of database, iID is the serial number of the string.
+Return Value: return 0 if delete fail; return 1 if return success.
+*/
+int DeleteString(char *pDB, int iID)
+{
+	char* pHead = NULL;
+	char* pTail = NULL;
+	if (NULL == (pHead = FindString(pDB, iID)) && 0 == iID)
+	{
+		return 0;
+	}
+
+	iSerialNo[iID] = 0;
+	pTail = pHead + *(pHead + 1) - 1; 
+	for (; pHead <= pTail; pHead++, pTail--)
+	{
+		*pHead = '\0';
+		*pTail = '\0';
+	}
+	
+	return 1;
 }
 int Statistics(char *pDB)
 {
@@ -122,9 +181,9 @@ char DBInfo(char *pDB)
 }
 
 /*
-function: Input a string to string cache.
+Function: Get a string from stdin to string cache.
 Parameter: string cache adress.
-Return value: Returns the number of string length + 2byte flag bit.
+Return value: Returns the number of string length + 1byte null character + 2byte flag bit.
 */
 int GetString()
 {
@@ -135,51 +194,75 @@ int GetString()
     {
         szCache[i] = '\0';
     }
+    //fgets(szCache, 31, stdin);
     scanf("%30s", szCache);
     fflush(stdin);
    
     return strlen(szCache) + 1 + 2; //+1 is '\0'，+2 are serial number and flag bit.
 }
 
-void OutPutString(char* pDB, int iID)
+/*
+Function: Find a String from database by it's serial number, then output it on the screen.
+Parameter: iID is String serial number, pDB is a pointer to the database.
+Return value: return 1 if output success; return 0 if not.
+*/
+int OutPutString(char* pDB, int iID)
 {
-    int i = 0;
+
     
-    for (; i < DBSIZ; i++)
-    {
-        if ('\0' == pDB[i])
-        {
-            continue;
-        }
-        else if (iID != pDB[i])
-        {
-            i += pDB[i + 1];
-        }
-        if (iID == pDB[i])
-        {
-            strcpy(szCache, &pDB[i + 2]);
-            PutString();
-            break;
-        }
-            
-    }
+	if (SearchByNo(pDB, iID))
+	{
+		PutString();
+		return 1;
+	}
+    
+    //for (; i < DBSIZ; i++)
+    //{
+    //    if ('\0' == pDB[i])
+    //    {
+    //        continue;
+    //    }
+    //    else if (iID != pDB[i])
+    //    {
+    //        i += pDB[i + 1];
+    //    }
+    //    if (iID == pDB[i])
+    //    {
+    //        strcpy(szCache, &pDB[i + 2]);
+    //        
+    //        break;
+    //    }
+    //        
+    //}
+	return 0;
 }
 
+/*
+Function: Output the String in the szCache, clear the szCache.
+*/
 void PutString()
 {
+	char* pHead = szCache;
     if ('\0' != szCache[0])
     {
-        printf("%s", szCache);
+        printf("No%d.%s\n", (int)*szCache, szCache + 2);
         FlushCache();
     }
 }
 
+/*
+Function: Find contiguous space from pDB according to iStrLength.
+Parameter: pDB is the pointer that pointed to the database which you want to store the string in.
+iStrLength is the string length + 3byte.
+Return value: return starting address of free space. if there don't have enough contiguous free space, return NULL.
+*/
 static char* FindSpace(char* pDB, int iStrLength)
 {
     char *pchHead = NULL;
     int isChar = 1;
     int i = 0;
     int iCountSpace = 0;
+
 
     for (i = 0; i < DBSIZ; i++)
     {
@@ -194,7 +277,7 @@ static char* FindSpace(char* pDB, int iStrLength)
         }
         if (iCountSpace > iStrLength)
         {
-            break;
+            return pchHead;
         }
         if ('\0' != pDB[i])
         {
@@ -203,6 +286,7 @@ static char* FindSpace(char* pDB, int iStrLength)
         }
     }
 
+    pchHead = NULL;
     return pchHead;
 }
 
@@ -214,38 +298,190 @@ void FlushCache()
         szCache[i] = '\0';
     }
 }
-void GetSearchInfo()
+
+/*
+Function: Receive Search info from stdin, 
+*/
+//void GetSearchInfo()
+//{
+//    int iID = 0;
+//    char* pID = NULL;
+//    if (10 == Key)
+//    {
+//    }
+//    if (20 == Key)
+//    {
+//        GetString();
+//    }
+//    if (30 == Key)
+//    {
+//        scanf("%8p", pID);
+//        return pID;
+//    }
+//}
+
+/*
+Function: Find a String from database by it's serial number, copy it to szCache.
+Parameter: iID is String serial number, pDB is a pointer to the database.
+Return value: return 1 if find; return 0 if not find.
+*/
+int SearchByNo(char *pDB, int iID)
 {
-    
+    char* pID = NULL;
+    pID = FindString(pDB, iID);
+	if (!pID)
+	{
+		return 0;
+	}
+
+    strcpy(szCache, (pID));
+    //int i = 0;
+
+    //for (; i < DBSIZ; i++)
+    //{
+    //    if ('\0' == pDB[i])
+    //    {
+    //        continue;
+    //    }
+    //    else if (iID != pDB[i]) //既不是'\0'，ID又不符合，
+    //    {
+    //        i += pDB[i + 1];
+    //    }
+    //    if (iID == pDB[i])
+    //    {
+    //        strcpy(szCache, &pDB[i + 2]);
+    //        break;
+    //    }
+    //}
+	return 1;
 }
-int SearchByNo(char *pDB)
+/*
+Function: Search a string from database by inputted keyword, output all the string that include the keyword.
+Return value: if not return 0;
+*/
+int SearchByStr(char *pDB)
+{
+    int iID = 1;
+    int iRet = 0;
+    int i = 0;
+    int j = 0;
+    int k = 0;
+    
+    char *pcDB = NULL;   //Cache first address
+    char *pDBHead = NULL;   //Current string first address
+    char caryTmpDB[31] = { 0 };
+    strcpy(caryTmpDB, szCache);
+    pcDB = caryTmpDB;
+
+    while (pDBHead = FindString(pDB, iID))
+    {
+        pDBHead += 2;
+
+        for (i = 0; pDBHead[i] != '\0'; i++)
+        {
+            for (j = i, k = 0; pcDB[k] != '\0' && pDBHead[j] == pcDB[k]; j++, k++);
+            
+            if (k > 0 && pcDB[k] == '\0')
+            {
+                strcpy(szCache, pDBHead - 2/*[i + 2]*/);
+                PutString();
+                iRet++;
+                break;
+            }
+        }
+        iID++;
+    }
+    return iRet;
+}
+
+/*
+Function: Find a string according to a address from user input, then copy it to the szCache.
+Parameter: pDB is the Database.
+Return Value: if find the string, return 1; else return 0.
+*/
+int SearchByAddr(char *pDB, char* pcAddr)
+{
+	char *pSrc = pcAddr;
+	int iID = 1;
+	char *pDest = NULL;
+	int iLen = 0;
+
+	do
+	{		
+		if (!(pDest = FindString(pDB, iID)))
+		{
+			break;
+		}
+		
+		iLen = *(pDest + 1);
+
+		if (pSrc >= pDest && pSrc <= (pDest + iLen - 1))
+		{
+			strcpy(szCache, (pDest));
+			return 1;
+		}
+
+		iID++;
+
+	} while (1);
+	
+    /*char *pSrc = (char *)*szCache;
+	char *pDest = FindString(pDB, iID);
+	for (; pDest < pDest && NULL != pDest; iID++)
+	{
+		pDest = FindString(pDB, iID);
+	}*/
+
+	return 0;
+}
+
+/*
+Function: get serial number from stdin.
+Return value: return serial number.
+*/
+int GetID()
+{
+    int iID = 0;
+    scanf("%3d", &iID);
+    return iID;
+}
+/*
+Function: get serial number from stdin.
+Return value: return serial number.
+*/
+char* GetAddr()
+{
+	char* pcAddr = NULL;
+	scanf("%8p", &pcAddr);
+	return pcAddr;
+}
+/*
+Function: Find string first address from pDB.
+Parameter: pDB is the Database first address; iID is the serial number of the string that need to find.
+Return Value: If find ,return string serial number address; if not, return NULL.
+
+*/
+char *FindString(char *pDB, int iID)
 {
     int i = 0;
-
-    for (; i < DBSIZ; i++)
+    char* pHead = NULL;
+    while (i < DBSIZ)
     {
         if ('\0' == pDB[i])
         {
+            i++;
             continue;
         }
-        else if (iID != pDB[i])
+        else if (iID != pDB[i]) //既不是'\0'，ID又不符合，
         {
             i += pDB[i + 1];
         }
         if (iID == pDB[i])
         {
-            strcpy(szCache, &pDB[i + 2]);
-            PutString();
+            pHead = &pDB[i];
             break;
         }
-
     }
+    return pHead;
 }
-int SearchByStr(char *pDB)
-{
 
-}
-int SearchByAddr(char *pDB)
-{
-
-}

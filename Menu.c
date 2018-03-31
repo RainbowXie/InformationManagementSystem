@@ -64,21 +64,60 @@ void PrintMenu()
         printf("您输入的字符串是：");
         break;
     }
+    case 8:
+    {
+        printf("您查找的字符串是：");
+        break;
+    }
+    case 9:
+    {
+        printf("1.继续查询\n");
+        printf("0.返回\n");
+        printf("请选择：");
+        break;
+    }
     case 10:
     {
         printf("请输入编号：");
         break;
     }
+	case 11:
+	{
+		printf("您要修改的字符串是：\r\n");
+		break;
+	}
+	case 12:
+	{
+		printf("您想修改成啥样≡[。。]≡\n");
+	}
     case 20:
     {
         printf("请输入字符串：");
         break;
     }
+	case 21:
+	{
+		printf("确定修改吗？\r\n");
+		printf("1.确定\r\n");
+		printf("2.重新输入\r\n");
+		printf("3.返回\r\n");
+		break;
+	}
     case 30:
     {
         printf("请输入地址：");
         break;
     }
+	case 31:
+	{
+		printf("请输入ID:");
+		break;
+	}
+	case 40:
+	{
+		printf("不存在的欸(+_+)?\n");
+		break;
+	}
     case 0:
     {
         printf("再见！");
@@ -96,14 +135,6 @@ void PrintMenu()
     return ;
 }
 
-/*
-Function: Jump to Menu
-*/
-PrintSubMenu()
-{
-    Key = Key * 10;
-    PrintMenu();
-}
 /*
 Function: Receive input options.
 */
