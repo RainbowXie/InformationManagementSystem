@@ -56,7 +56,7 @@ void PrintMenu()
     }
     case 6:
     {
-        printf("目前空间使用情况：\n");
+        printf("目前空间使用情况：(U为已使用空间，F为未使用空间)\n");
         break;
     }
     case 7:
@@ -114,6 +114,22 @@ void PrintMenu()
 	case 17:
 	{
 		printf("删除失败＞﹏＜\n");
+		break;
+	}
+	case 18:
+	{
+		printf("\r\n");
+		printf("\r\n");
+		printf("是否进行碎片整理？\n");
+		printf("1.是\n");
+		printf("2.否\n");
+		printf("请选择：\n");
+
+		break;
+	}
+	case 19:
+	{
+		printf("整理完成！\n");
 		break;
 	}
     case 20:

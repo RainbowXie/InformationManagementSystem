@@ -226,9 +226,64 @@ void OutputStatistics(struct CountNumber* stCount)
 	}
 }
 
-char DBInfo(char *pDB)
+/*
+Function: Output database space usage. if one byte was been used, output U, if not, output F.
+Parameter: pDb is the pointer of database.
+Return Value: return 1 if pDB not passed in properly; return 0 if Stactistics complete.
+*/
+int DBOutput(char *pDB)
 {
-
+	int iStatus = 0;
+	
+	if (NULL == pDB)
+	{
+		return 1;
+	}
+	for (int i = 0; i < DBSIZ; i++)
+	{
+		
+		if (DBInfo(i))
+		{
+			printf("U ");
+		}
+		else
+		{
+			printf("F ");
+		}
+	}
+	/*if (NULL == pDB)
+	{
+		return 1;
+	}
+	for (int i = 0; i < DBSIZ; i++)
+	{
+		if ('\0' == *(pDB))
+		{
+			DBOutPut(1);
+		}
+		else
+		{
+			DBOutPut(0);
+		}
+	}
+*/
+	return 0;
+}
+/*
+Function: Check database space usage. 
+Parameter: i is the space usage condition, 1 is used, 0 is not used.
+Return Value: if one byte was been used, return 1, if not, return 0;
+*/
+int DBInfo(int i)
+{
+	if ('\0' == i)
+	{
+		return 0;
+	}
+	else
+	{
+		return 1;
+	}
 }
 
 /*
@@ -536,3 +591,67 @@ char *FindString(char *pDB, int iID)
     return pHead;
 }
 
+/*
+Function: Defragmentation. move string forward.
+Parameter: pDB is the Database first address.
+*/
+int Defragmentation(char* pDB)
+{
+	char* pHead = pDB;
+	char* pMove = pDB;
+	int iIsSpace = 1;	//前一个为'\0'则为0，非'\0'则为1
+	int i = 0;
+	int iIsMoved = 0;	//发生转移置为1
+	if (!pDB)
+	{
+		return -2;
+	}
+
+	while (i < DBSIZ)
+	{
+		if (!(0 == iIsSpace && '\0' == *pHead) && (1 != iIsMoved))	//前一个是'\0'，且当前也是'\0'，并且前一步没有交换过就停下来。
+		{
+			if ('\0' == *pHead)
+			{
+				iIsSpace = 0;
+			}
+			else
+			{
+				iIsSpace = 1;
+			}
+			pHead++;
+			//iIsMoved = 0;
+		}
+		/*if (1 == iIsMoved)
+		{
+
+		iIsMoved = 0;
+		}*/
+		if ((pMove <= pHead || '\0' == *(pMove)) && !(1 == iIsMoved))
+		{
+			//iIsMoved = 0;
+			pMove++;
+			i++;
+		}
+		/*
+		如果pMove不等于pHead，且前一步交换过，pMove指向非'\0'；并且pMove != pHead就交换。
+		或者pMove不等于pHead，pHead前一个为'\0'，pMove指向非'\0'；并且pMove != pHead就交换。
+		*/
+		if (((1 == iIsMoved && '\0' != *pMove) || (0 == iIsSpace && '\0' == *pHead && '\0' != *pMove))
+			&& (pMove != pHead))	
+		{								
+			*pHead = *pMove;
+			*pMove = '\0';
+			iIsMoved = 1;
+			iIsSpace = 1;
+			pHead++;
+			pMove++;
+			i++;
+			continue;
+		}
+		iIsMoved = 0;
+		//i++;
+	}
+
+	return 0;
+}

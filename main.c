@@ -9,7 +9,8 @@ int main()
     int iSerialNo = 0;
     char cDataBase[DBSIZ] = { 0 };
     char *pDB = cDataBase;
-	struct CountNumber stCount = { { 0 }, 0 };
+	struct CountNumber stCount = { { 0 }, 0 };	//Statistical data
+	
 
     while (1)
     {
@@ -249,10 +250,32 @@ int main()
         }
         case 6:
         {
-            DBInfo(pDB);
-
+			PrintMenu();
+			DBOutput(pDB);
+			Key = 18;
+			PrintMenu();
+			GetKey();
+			switch (Key)
+			{
+			case 1:
+			{
+				Defragmentation(pDB);
+				Key = 19;
+				PrintMenu();
+			}
+			case 2:
+			{
+				break;
+			}
+			default:
+			{
+				Key = -3;
+				PrintMenu();
+				break;
+			}
+			}/*switch(Key) end*/
             break;
-        }
+		}/*case 6: end*/
 		default:
 		{
 			system("cls");

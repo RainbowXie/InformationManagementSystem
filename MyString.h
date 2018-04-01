@@ -1,7 +1,7 @@
 # include <stdio.h>
 # include <string.h>
 # define _CRT_SECURE_NO_WARNINGS
-# define CACHESIZ 31
+# define CACHESIZ 34
 # define DBSIZ 1000
 # define IDSIZ 334
 # define LETTERCOUNT 26
@@ -34,7 +34,9 @@ int DeleteString(char *pDB, int iID);
 void Statistics(char *pDB, struct CountNumber* stCount);
 void OutputStatistics(struct CountNumber* stCount);
 
-char DBInfo(char *pDB);
+int DBInfo(int i);
+int DBOutput(char* pDB);
+int Defragmentation(char* pDB);
 
 int OutPutString(char* pDB, int iID);
 void PutString();
