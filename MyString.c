@@ -1,7 +1,7 @@
 # include "MyString.h"
 # define _CRT_SECURE_NO_WARNINGS
 static char szCache[CACHESIZ] = { 0 };
-static int iSerialNo[333] = { 0 };
+static int iSerialNo[IDSIZ] = { 0 };
 //int StringControl(char *pDB, char *szCache)
 //{
 //    int iStrLength = 0;
@@ -46,7 +46,7 @@ static int iSerialNo[333] = { 0 };
 //    return 0;
 //}
 /*
-Function: Add a string into string database.
+Function: Add a string from szCache into string database, then flush szCache.
 
 Parameter: pDb is the pointer of database.
 Return Value: return the serial number of the stored string. if don't find enough space, return -2.
@@ -63,7 +63,7 @@ int InPutString(char *pDB)
 }
 
 /*
-Function: Add a string into the string database. 
+Function: Add a string from szCache into the string database, then flush szCache.
 Set serial number which according to the input order as the 1st byte of each string.
 Set string length as the 2nd byte of the string.
 The 3rd byte begin to store string.
@@ -100,19 +100,22 @@ int AddString(char *pDB, int iStrLength)
 }
 
 /*
-Function: modify a string in database. if database have enough space excuting modify; if not, keep it as it is.
+Function: modify a string in database. if database have enough space excuting modify and flush szCache; if not, keep it as it is.
 Parameter: Parameter: pDb is the pointer of database, iID is the serial number of the string.
 Return Value: Return 1 if modify success, Return -2 if failure.
 */
 int ModifyString(char *pDB, int iID)
 {
 	char* paryHead = NULL;
+	size_t iLenDest = 0;
+	size_t iLenIn = 0;
 	if (NULL == (paryHead = FindString(pDB, iID)))
 	{
 		return -2;
 	}
-
-	if (*(paryHead + 1) < (strlen(szCache) + 3))
+	iLenDest = *(paryHead + 1);
+	iLenIn = strlen(szCache) + 3;
+	if (iLenDest < iLenIn)
 	{
 		if (NULL == FindSpace(pDB, (strlen(szCache) + 3)))
 		{
@@ -121,8 +124,8 @@ int ModifyString(char *pDB, int iID)
 	}
 
 	DeleteString(pDB, iID);
-	InPutString(pDB);
-	return 0;
+	AddString(pDB, iLenIn);
+	return 1;
 }
 //int SearchString(char *pDB, int Key)
 //{
@@ -146,6 +149,7 @@ int ModifyString(char *pDB, int iID)
 //    }
 //    return iRet;
 //}
+
 /*
 Function: Delete a string from database, release it's serial number.
 Parameter: pDb is the pointer of database, iID is the serial number of the string.
@@ -155,7 +159,7 @@ int DeleteString(char *pDB, int iID)
 {
 	char* pHead = NULL;
 	char* pTail = NULL;
-	if (NULL == (pHead = FindString(pDB, iID)) && 0 == iID)
+	if (NULL == (pHead = FindString(pDB, iID)) && 0 == iSerialNo[iID])
 	{
 		return 0;
 	}
@@ -170,9 +174,56 @@ int DeleteString(char *pDB, int iID)
 	
 	return 1;
 }
-int Statistics(char *pDB)
+/*
+Function: Count the Number of each letter and record it in stCount.iaryLettersNumber[] as Alphabet order,
+Count the whole number of letters.
+Parameter: pDb is the pointer of database, stCount is the struct that store each letter number and the whole number.
+*/
+void Statistics(char *pDB, struct CountNumber* stCount)
+
 {
 
+	char* pszHead = NULL;
+	char* pszTmp = NULL;
+	
+	for (size_t i = 0; i < LETTERCOUNT; i++)
+	{
+		(stCount->iaryLettersNumber)[i] = 0;
+	}
+	stCount->SumNumber = 0;
+
+	for (int i = 0; i < IDSIZ; i++)
+	{
+		if (0 == iSerialNo[i])
+		{
+			continue;
+		}
+
+		pszHead = FindString(pDB, i);
+		pszTmp = pszHead + 2;
+		while ('\0' != *pszTmp)
+		{
+			for (int j = 0; j < LETTERCOUNT; j++)
+			{
+				if ((65 + j) == *pszTmp || (97 + j) == *pszTmp)
+				{
+					(stCount->iaryLettersNumber)[j]++;
+					stCount->SumNumber++;
+					break;
+				}
+			}
+			pszTmp++;
+		}
+	}
+
+}
+
+void OutputStatistics(struct CountNumber* stCount)
+{
+	for (int i = 0; i < LETTERCOUNT; i++)
+	{
+		printf("%c有%d个，占总字数的 %d/%d。\r\n", i + 65, (stCount->iaryLettersNumber)[i], (stCount->iaryLettersNumber)[i], stCount->SumNumber);
+	}
 }
 
 char DBInfo(char *pDB)

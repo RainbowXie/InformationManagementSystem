@@ -9,6 +9,7 @@ int main()
     int iSerialNo = 0;
     char cDataBase[DBSIZ] = { 0 };
     char *pDB = cDataBase;
+	struct CountNumber stCount = { { 0 }, 0 };
 
     while (1)
     {
@@ -40,7 +41,7 @@ int main()
 
             system("pause");
             break;
-        }
+		}/*case 1: end*/
         case 2:
         {
 			while (36 != Key)
@@ -61,6 +62,9 @@ int main()
 				Key = 31;
 				PrintMenu();
 				iSerialNo = GetID();
+				Key = 12;
+				PrintMenu();
+				GetString();
 				Key = 21;
 				PrintMenu();
 				GetKey();
@@ -69,9 +73,19 @@ int main()
 				{
 				case 12:
 				{
-					PrintMenu();
-					GetString();
-					ModifyString(pDB, iSerialNo);
+					if (-2 == ModifyString(pDB, iSerialNo))
+					{
+						Key = 13; 
+						PrintMenu();
+					}
+					else
+					{
+						Key = 14;
+						PrintMenu();
+
+					}
+					system("pause");
+					Key = 36;
 					break;
 				}
 				case 24:
@@ -83,10 +97,18 @@ int main()
 				{
 					break;
 				}
+				default:
+				{
+					system("cls");
+					Key = -3;
+					PrintMenu();
+					system("pause");
+					break;
+				}
 				}/*switch (Key) end*/
 			}/*while (1) end*/
             break;
-		}/*case 2 end*/
+		}/*case 2: end*/
         case 3:
         {
 
@@ -145,23 +167,84 @@ int main()
 					PutString();
 					break;
                 }
-                }
+				default:
+				{
+					system("cls");
+					Key = -3;
+					PrintMenu();
+					system("pause");
+					break;
+				}
+				}/*switch(Key) end*/
                 Key = 9;
                 PrintMenu();
                 GetKey();
                 system("cls");
-            }
+			}/*while(36 == Key) end*/
             break;
         }
         case 4:
         {
-			iSerialNo = GetID();
-            DeleteString(pDB, iSerialNo);
-            break;
+			while (32 != Key && -3 != Key)
+			{
+				Key = 4;
+				PrintMenu();
+				GetString();
+				Key = 15;
+				PrintMenu();
+				if (!SearchByStr(pDB))
+				{
+					Key = 40;
+					PrintMenu();
+					system("pause");
+					system("cls");
+					break;
+				}
+				Key = 31;
+				PrintMenu();
+				iSerialNo = GetID();
+				Key = 22;
+				PrintMenu();
+				GetKey();
+				Key *= 16;
+				switch (Key)
+				{
+				case 16:
+				{
+					if (0 == DeleteString(pDB, iSerialNo))
+					{
+						Key = 17;
+						PrintMenu();
+					}
+					else
+					{
+						PrintMenu();
+					}
+					system("pause");
+					Key = 32;
+					break;
+				}
+				case 32:
+				{
+					break;
+				}
+				default:
+				{
+					system("cls");
+					Key = -3;
+					PrintMenu();
+					system("pause");
+					break;
+				}
+				}/*switch (Key) end*/
+			}/*while (1) end*/
+			break;
         }
         case 5:
         {
-            Statistics(pDB);
+			Statistics(pDB, &stCount);
+			OutputStatistics(&stCount);
+			system("pause");
             break;
         }
         case 6:
@@ -170,10 +253,14 @@ int main()
 
             break;
         }
-        default:
-        {
-            PrintMenu();
-        }
+		default:
+		{
+			system("cls");
+			Key = -3;
+			PrintMenu();
+			system("pause");
+			break;
+		}
 		}/*switch (Key) end*/;
     }
     system("pause");

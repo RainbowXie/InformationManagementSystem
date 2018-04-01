@@ -46,7 +46,7 @@ void PrintMenu()
     }
     case 4:
     {
-        printf("请输入您要删除的字段：\n");
+        printf("请输入您要删除的字符串：\n");
         break;
     }
     case 5:
@@ -89,6 +89,32 @@ void PrintMenu()
 	case 12:
 	{
 		printf("您想修改成啥样≡[。。]≡\n");
+		break;
+	}
+	case 13:
+	{
+		printf("空间不够了╮(╯▽╰)╭\n");
+		break;
+	}
+	case 14:
+	{
+		printf("修改成功。\n");
+		break;
+	}
+	case 15:
+	{
+		printf("您要删除的字符串是：\n");
+		break;
+	}
+	case 16:
+	{
+		printf("删除成功。\n");
+		break;
+	}
+	case 17:
+	{
+		printf("删除失败＞﹏＜\n");
+		break;
 	}
     case 20:
     {
@@ -101,6 +127,13 @@ void PrintMenu()
 		printf("1.确定\r\n");
 		printf("2.重新输入\r\n");
 		printf("3.返回\r\n");
+		break;
+	}
+	case 22:
+	{
+		printf("确定删除吗？\r\n");
+		printf("1.确定\r\n");
+		printf("2.返回\r\n");
 		break;
 	}
     case 30:
@@ -124,6 +157,11 @@ void PrintMenu()
         break;
     }
     //abnormal exit
+	case -3:
+	{
+		printf("咱没这个选项->_->\n");
+		break;
+	}
     case -2:
     {
         printf("System Crash!!!!!!!!!!!!\n");
