@@ -49,7 +49,7 @@ int main()
 			{	
 				Key = 2;
 				PrintMenu();
-				GetString();
+				/*GetString();
 				Key = 11;
 				PrintMenu();
 				if (!SearchByStr(pDB))
@@ -62,10 +62,27 @@ int main()
 				}
 				Key = 31;
 				PrintMenu();
+				*/
 				iSerialNo = GetID();
+				if (0 == iSerialNo)
+				{
+					system("cls");
+					Key = -3;
+					PrintMenu();
+					system("pause");
+					break;
+				}
+
 				Key = 12;
 				PrintMenu();
-				GetString();
+				if (0 == GetString())
+				{
+					system("cls");
+					Key = -3;
+					PrintMenu();
+					system("pause");
+					break;
+				}
 				Key = 21;
 				PrintMenu();
 				GetKey();
@@ -122,9 +139,22 @@ int main()
                 {
                     continue;
                 }
-                system("cls");
-				Key *= 10;
-				PrintMenu();
+				if (Key > 3 || Key < 0)
+				{
+					system("cls");
+					Key = -3;
+					PrintMenu();
+					system("pause");
+					system("cls");
+					continue;
+				}
+				else
+				{
+					system("cls");
+					Key *= 10;
+					PrintMenu();
+				}
+                
 
                 switch (Key)
                 {
@@ -142,7 +172,14 @@ int main()
                 }
                 case 20:
 				{
-                    GetString();
+					if (0 == GetString())
+					{
+						system("cls");
+						Key = -3;
+						PrintMenu();
+						system("pause");
+						break;
+					}
 					Key = 8;
 					PrintMenu();
 					if (!SearchByStr(pDB))
@@ -180,17 +217,24 @@ int main()
                 Key = 9;
                 PrintMenu();
                 GetKey();
+				if (1 != Key && 0 != Key)
+				{
+					system("cls");
+					Key = -3;
+					PrintMenu();
+					system("pause");
+				}
                 system("cls");
 			}/*while(36 == Key) end*/
             break;
         }
-        case 4:
+        case 4:	//Bug! maybe delete other strings.
         {
 			while (32 != Key && -3 != Key)
 			{
 				Key = 4;
 				PrintMenu();
-				GetString();
+				/*GetString();
 				Key = 15;
 				PrintMenu();
 				if (!SearchByStr(pDB))
@@ -200,10 +244,13 @@ int main()
 					system("pause");
 					system("cls");
 					break;
-				}
+				}*/
+				
+				//PrintMenu();
+				iSerialNo = GetID();
 				Key = 31;
 				PrintMenu();
-				iSerialNo = GetID();
+				OutPutString(pDB, iSerialNo);
 				Key = 22;
 				PrintMenu();
 				GetKey();
@@ -262,6 +309,7 @@ int main()
 				Defragmentation(pDB);
 				Key = 19;
 				PrintMenu();
+				system("pause");
 			}
 			case 2:
 			{

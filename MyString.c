@@ -57,6 +57,10 @@ int InPutString(char *pDB)
     int iRet = 0;
     int iStrLength = 0;
     iStrLength = GetString(szCache);
+	if (0 == iStrLength)
+	{
+		return -2;
+	}
     iRet = AddString(pDB, iStrLength);
 
     return iRet;
@@ -159,7 +163,7 @@ int DeleteString(char *pDB, int iID)
 {
 	char* pHead = NULL;
 	char* pTail = NULL;
-	if (NULL == (pHead = FindString(pDB, iID)) && 0 == iSerialNo[iID])
+	if (NULL == (pHead = FindString(pDB, iID)) || 0 == iSerialNo[iID] || 0 == iID)
 	{
 		return 0;
 	}
@@ -242,7 +246,7 @@ int DBOutput(char *pDB)
 	for (int i = 0; i < DBSIZ; i++)
 	{
 		
-		if (DBInfo(i))
+		if (DBInfo(pDB, i))
 		{
 			printf("U ");
 		}
@@ -274,9 +278,9 @@ Function: Check database space usage.
 Parameter: i is the space usage condition, 1 is used, 0 is not used.
 Return Value: if one byte was been used, return 1, if not, return 0;
 */
-int DBInfo(int i)
+int DBInfo(char* pDB, int i)
 {
-	if ('\0' == i)
+	if ('\0' == *(pDB + i))
 	{
 		return 0;
 	}
@@ -300,8 +304,16 @@ int GetString()
     {
         szCache[i] = '\0';
     }
-    //fgets(szCache, 31, stdin);
-    scanf("%30s", szCache);
+    /*fgets(szCache, 32, stdin);
+	for (i = 0; i < 32; i++)
+	{
+		if ('\n' == *(szCache + i))
+		{
+			*(szCache + i) = '\0';
+		}
+
+	}*/
+    scanf("%30[^\n]s", szCache);
     fflush(stdin);
    
     return strlen(szCache) + 1 + 2; //+1 is '\0'，+2 are serial number and flag bit.
@@ -314,8 +326,10 @@ Return value: return 1 if output success; return 0 if not.
 */
 int OutPutString(char* pDB, int iID)
 {
-
-    
+	if (0 == iID || NULL == pDB)
+	{
+		return 0;
+	}
 	if (SearchByNo(pDB, iID))
 	{
 		PutString();
@@ -475,7 +489,7 @@ int SearchByStr(char *pDB)
     
     char *pcDB = NULL;   //Cache first address
     char *pDBHead = NULL;   //Current string first address
-    char caryTmpDB[31] = { 0 };
+    char caryTmpDB[CACHESIZ] = { 0 };
     strcpy(caryTmpDB, szCache);
     pcDB = caryTmpDB;
 
@@ -490,6 +504,7 @@ int SearchByStr(char *pDB)
             if (k > 0 && pcDB[k] == '\0')
             {
                 strcpy(szCache, pDBHead - 2/*[i + 2]*/);
+
                 PutString();
                 iRet++;
                 break;
@@ -513,7 +528,7 @@ int SearchByAddr(char *pDB, char* pcAddr)
 	int iLen = 0;
 
 	do
-	{		
+	{	
 		if (!(pDest = FindString(pDB, iID)))
 		{
 			break;
@@ -548,7 +563,9 @@ Return value: return serial number.
 int GetID()
 {
     int iID = 0;
+	fflush(stdin);
     scanf("%3d", &iID);
+	fflush(stdin);
     return iID;
 }
 /*
@@ -588,7 +605,7 @@ char *FindString(char *pDB, int iID)
             break;
         }
     }
-    return pHead;
+	return pHead;
 }
 
 /*
@@ -600,7 +617,7 @@ int Defragmentation(char* pDB)
 	char* pHead = pDB;
 	char* pMove = pDB;
 	int iIsSpace = 1;	//前一个为'\0'则为0，非'\0'则为1
-	int i = 0;
+	int i = 1;
 	int iIsMoved = 0;	//发生转移置为1
 	if (!pDB)
 	{

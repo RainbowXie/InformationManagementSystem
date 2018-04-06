@@ -29,7 +29,7 @@ void PrintMenu()
     }
     case 2:
     {
-        printf("请输入您要修改的字符串：\n");
+        printf("请输入您要修改的字符串ID：");
         break;
     }
     case 3:
@@ -46,7 +46,7 @@ void PrintMenu()
     }
     case 4:
     {
-        printf("请输入您要删除的字符串：\n");
+        printf("请输入您要删除的字符串ID：\n");
         break;
     }
     case 5:
@@ -93,7 +93,7 @@ void PrintMenu()
 	}
 	case 13:
 	{
-		printf("空间不够了╮(╯▽╰)╭\n");
+		printf("失败了╮(╯▽╰)╭\n");
 		break;
 	}
 	case 14:
@@ -159,7 +159,7 @@ void PrintMenu()
     }
 	case 31:
 	{
-		printf("请输入ID:");
+		printf("您要删除的字符串是：\n");
 		break;
 	}
 	case 40:
@@ -194,6 +194,7 @@ Function: Receive input options.
 */
 void GetKey()
 {
+	Key = -3;
     fflush(stdin);
     scanf("%1d", &Key);
     fflush(stdin);

@@ -1,0 +1,2 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<DEFECTS><DEFECT><SFA><FILEPATH>e:\科锐\weekwork\informationmanagementsystem\</FILEPATH><FILENAME>main.c</FILENAME><LINE>206</LINE><COLUMN>17</COLUMN></SFA><DEFECTCODE>6289</DEFECTCODE><DESCRIPTION>运算符不正确:    基于 || 的互斥运算为非零常量。  是否原本要使用 &amp;&amp;?</DESCRIPTION><FUNCTION>main</FUNCTION><DECORATED>main</DECORATED><FUNCLINE>7</FUNCLINE><PATH/></DEFECT></DEFECTS>
